@@ -53,3 +53,30 @@ def print_matrix(A):
       # in other words, it's exactly the ij-th entry in the matrix M
       print (A[i][j], "\t", end="")
     print("\n")
+
+def row(A, n):
+  return A[n]
+
+def col(A, n):
+  c = list()
+  for i in range(len(A)):
+    c.append(A[i][n])
+  return c
+
+def changeEntry(A, x, y, n):
+  A[x][y] = n
+
+def addRow(A, target, row, scalar):
+  for i in range(len(A[row])):
+    A[target][i] += scalar * A[row][i]
+
+def multiplyRow(A, target, scalar):
+  for i in range(len(A[target])):
+    A[target][i] *= scalar
+
+def swapRow(A, row1, row2):
+
+#tests
+changeEntry(M, 0, 0, 1.11)
+print(row(M, 0))
+print(col(M, 0))
