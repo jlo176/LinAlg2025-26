@@ -1,6 +1,6 @@
 # Matrices as Lists of Lists
 # A simple introduction to handling matrices as lists of lists in Python
-# Patrick Honner 9/21/22
+# (partially copied from) Patrick Honner 9/21/22
 
 # Need this to deepcopy lists
 import copy
