@@ -8,52 +8,6 @@ import copy
 # Makes presenting a table of data easier
 from tabulate import tabulate
 
-# We'll hardcode the matrix as a list of lists
-# The nested lists function as the rows of the matrix
-
-row_1 = [3, -4, 0, 5]
-row_2 = [-1, -2, 3, 10]
-row_3 = [4, 1, 1, 3]
-
-M = [ row_1, row_2, row_3]
-
-
-print("Here is matrix M shown as a table in Python:\n")
-print(tabulate(M))
-
-
-# Create a new copy of the matrix
-# deepcopy creates a copy of values, not a copy of references
-N = copy.deepcopy(M)
-
-# Ask user to perform an elementary row operation
-row_choice = input("Choose a row to multiply by a scalar:  ")
-scalar = input("Enter a scalar to multiply by:  ")
-
-# Convert row_choice to the appropriate index for the list
-row = int(row_choice) - 1
-# Convert the string input to a float
-scalar = float(scalar)
-
-# Perform the elementary row operation
-for i in range(len(N[row])):
-  N[row][i]=scalar*N[row][i]
-
-print("Here is the new matrix:")
-print(tabulate(N))
-
-
-
-# A function to print out a list of lists, i.e. a matrix
-# tabulate is nicer, so I didn't use this, but left as an example
-def print_matrix(A):
-  for i in range(len(A)):
-    for j in range(len(A[i])):
-      # M[i][j] is the jth entry in the ith list
-      # in other words, it's exactly the ij-th entry in the matrix M
-      print (A[i][j], "\t", end="")
-    print("\n")
-
 def row(A, n):
   return A[n]
 
@@ -75,8 +29,60 @@ def multiplyRow(A, target, scalar):
     A[target][i] *= scalar
 
 def swapRow(A, row1, row2):
+  for i in range(len(A[row1])):
+    temp = A[row1][i]
+    A[row1][i] = A[row2][i]
+    A[row2][i] = temp
 
-#tests
-changeEntry(M, 0, 0, 1.11)
-print(row(M, 0))
-print(col(M, 0))
+def pivot(A, row):
+    for i in range(len(A[row])):
+        if A[row][i] != 0:
+            return i
+    return -1
+
+def ref_helper(A, row):
+    p = pivot(A, row)
+    if p == -1:
+        return  # Skip zero row
+    multiplyRow(A, row, 1 / A[row][p])
+    for i in range(row + 1, len(A)):
+        factor = -A[i][p]
+        addRow(A, i, row, factor)
+
+def sort_pivot(A, row):
+    min_row = row
+    min_pivot = pivot(A, row)
+    for i in range(row + 1, len(A)):
+        piv = pivot(A, i)
+        if piv != -1 and (min_pivot == -1 or piv < min_pivot):
+            min_row = i
+            min_pivot = piv
+    swapRow(A, row, min_row)
+
+def ref(A):
+    row = 0
+    while row < len(A):
+        sort_pivot(A, row)
+        if pivot(A, row) == -1:
+            row += 1
+            continue
+        ref_helper(A, row)
+        row += 1
+
+def rref(A):
+    ref(A) 
+    for i in range(rows - 1, -1, -1):
+        if pivot(A, i) == -1:
+            continue 
+        for j in range(i - 1, -1, -1):
+            addRow(A, j, i, -A[j][pivot(A, i)])
+
+#main
+rows = int(input("enter number of rows: "))
+cols = int(input("enter number of cols: "))
+M = [[0 for _ in range(cols)] for _ in range(rows)]
+for i in range(rows * cols):
+  M[int(i / cols)][i % cols] = int(input("enter next entry: "))
+  print(tabulate(M))
+rref(M)
+print(tabulate(M))
